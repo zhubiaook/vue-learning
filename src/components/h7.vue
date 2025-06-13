@@ -7,7 +7,7 @@
       :class="{ 'sidebar-collapsed': isSidebarCollapsed }"
       :style="{ width: sidebarWidth + 'px' }"
     >
-      <div class="p-4 font-bold text-lg border-b border-gray-200">MCP</div>
+      <div class="p-4 font-bold text-lg border-b border-gray-200">Octopus</div>
       <!-- 新建聊天按钮 -->
       <div class="p-3">
         <button
@@ -50,28 +50,6 @@
             /></el-icon>
           </div>
         </div>
-        <div class="nav-group">
-          <div
-            class="nav-group-header cursor-pointer flex items-center justify-between p-2 hover:bg-gray-200"
-            @click="toggleResources"
-          >
-            <span>Resources</span>
-            <el-icon :class="{ 'transform rotate-180': !resourcesCollapsed }"
-              ><ArrowDown
-            /></el-icon>
-          </div>
-        </div>
-        <div class="nav-group">
-          <div
-            class="nav-group-header cursor-pointer flex items-center justify-between p-2 hover:bg-gray-200"
-            @click="togglePrompts"
-          >
-            <span>Prompts</span>
-            <el-icon :class="{ 'transform rotate-180': !promptsCollapsed }"
-              ><ArrowDown
-            /></el-icon>
-          </div>
-        </div>
       </div>
       <!-- 聊天历史 -->
       <div class="chat-history mt-4 border-t border-gray-200 pt-2">
@@ -100,6 +78,7 @@
         <el-icon v-else><Expand /></el-icon>
       </div>
     </div>
+
     <!-- 主内容区域 -->
     <div class="main-content flex-1 flex flex-col">
       <!-- 聊天内容区域 -->
