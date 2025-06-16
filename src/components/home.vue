@@ -16,7 +16,9 @@
             </div>
             <div v-if="message.role === 'assistant'">
               <div class="bg-gray-200 p-2 rounded-lg">
-                {{ message.content }}
+                <div v-for="content in message.content" :key="content">
+                  {{ content }}
+                </div>
               </div>
             </div>
           </div>
@@ -29,11 +31,11 @@
               class="w-full"
               v-model="query.input"
               placeholder="请输入内容"
-              @keyup.enter.prevent="send"
+              @keyup.enter.prevent="send2"
             />
           </el-col>
           <el-col :span="4">
-            <el-button type="primary" @click="send">发送</el-button>
+            <el-button type="primary" @click="send2">发送</el-button>
           </el-col>
         </el-row>
       </el-footer>
@@ -45,6 +47,14 @@
 import { reactive } from "vue";
 
 const messageList = reactive([]);
+const assistantContent = reactive({
+  role: "assistant",
+  content: ["思考中..."],
+});
+const userContent = reactive({
+  role: "user",
+  content: [""],
+});
 
 const query = reactive({
   input: "",
@@ -53,22 +63,44 @@ const query = reactive({
 import { sendMessage } from "/src/api";
 const send = async () => {
   let message = query.input;
-  messageList.push(
-    {
-      role: "user",
-      content: message,
-    },
-    {
-      role: "assistant",
-      content: "思考中...",
-    }
-  );
+  userContent.content = [message];
+  messageList.push(userContent);
   query.input = "";
-  const result = await sendMessage(message);
-  messageList.pop();
-  messageList.push({
-    role: "assistant",
-    content: result.data,
+  messageList.push(assistantContent);
+  // sleep 2 seconds, then for loop mock the assistant content
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+  for (let i = 0; i < 10; i++) {
+    assistantContent.content.push("message " + i);
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+  }
+};
+
+import { sendSSEMessage } from "../api";
+
+const send2 = () => {
+  let message = query.input;
+  query.input = "";
+  messageList.push(userContent);
+  messageList.push(assistantContent);
+
+  let eventSource = sendSSEMessage(message);
+
+  eventSource.addEventListener("chat", (event) => {
+    const data = JSON.parse(event.data);
+    if (data.content.includes("\n")) {
+      const parts = data.content.split("\n");
+      assistantContent.content[assistantContent.content.length - 1] += parts[0];
+      for (let i = 1; i < parts.length; i++) {
+        assistantContent.content.push(parts[i]);
+      }
+    } else {
+      assistantContent.content[assistantContent.content.length - 1] +=
+        data.content;
+    }
   });
+  eventSource.onerror = (error) => {
+    console.error(error);
+    eventSource.close();
+  };
 };
 </script>
