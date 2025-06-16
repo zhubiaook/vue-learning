@@ -1,0 +1,21 @@
+port: 8080
+logLevel: info # Choose one of the following: debug, info, warn, error, default to info
+logMode: text # Choose one of the following: json, text, default to text
+systemPrompt: You are a helpful assistant.
+titleGeneratorPrompt: Generate a title for this chat with only one sentence with maximum 5 words.
+
+llm:
+  provider: deepseek
+  model: deepseek-chat
+  apiKey: sk-afcb4a3c1eff44ffa8bb313900c977c1 # Default to environment variable OPENAI_API_KEY
+  endpoint: "https://api.deepseek.com" # Default to "https://api.openai.com/v1"
+
+genTitleLLM: # Default to the same LLM as the main LLM
+  provider: deepseek
+  model: deepseek-chat
+  apiKey: sk-afcb4a3c1eff44ffa8bb313900c977c1 # Default to environment variable OPENAI_API_KEY
+  endpoint: "https://api.deepseek.com" # Default to "https://api.openai.com/v1"
+
+mcpSSEServers:
+  sayhello:
+    url: http://127.0.0.1:5000/sse
